@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID as pgUUID
 from sqlalchemy.orm import relationship
 import uuid
 
-from database import Base
+from .database import Base
 
 # Association table for Many-to-Many relationship between Order and Product
 order_product = Table(

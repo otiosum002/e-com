@@ -1,10 +1,11 @@
-from pydantic import BaseModel, EmailStr
+# app/schemas.py
+from pydantic import BaseModel
 from typing import List, Optional
-from uuid import UUID
+
 
 class ProductBase(BaseModel):
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
     price: float
     in_stock: int
 
@@ -13,22 +14,22 @@ class ProductCreate(ProductBase):
 
 class Product(ProductBase):
     id: str
-
     class Config:
         orm_mode = True
 
+
 class UserBase(BaseModel):
     name: str
-    email: EmailStr
+    email: str
 
 class UserCreate(UserBase):
     pass
 
 class User(UserBase):
     id: str
-
     class Config:
         orm_mode = True
+
 
 class OrderBase(BaseModel):
     customer_id: str
@@ -39,6 +40,5 @@ class OrderCreate(OrderBase):
 
 class Order(OrderBase):
     id: str
-
     class Config:
         orm_mode = True
