@@ -5,7 +5,6 @@ import uuid
 
 from .database import Base
 
-# Association table for Many-to-Many relationship between Order and Product
 order_product = Table(
     "order_product", Base.metadata,
     Column("order_id", String, ForeignKey("orders.id")),
