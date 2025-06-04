@@ -43,4 +43,4 @@ class User(Base):
 class Order(Base):
     __tablename__ = "orders"
 
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))_
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
