@@ -1,16 +1,18 @@
 from sqlalchemy.orm import Session
-from app.models import models
-from app.common.types import schemas
+from app.models.model_order import Order
+from app.models.model_product import Product
+from app.common.types.order_schema import OrderCreate
 
-def create_order(db: Session, order: schemas.OrderCreate):
-   
-    products = db.query(models.Product).filter(models.Product.id.in_(order.product_ids)).all()
-
-    db_order = models.Order(customer_id=order.customer_id, products=products)
+def create_order(db: Session, order: OrderCreate):
+    products = db.query(Product).filter(Product.id.in_(order.product_ids)).all()
+    db_order = Order(customer_id=order.customer_id, products=products)
     db.add(db_order)
     db.commit()
     db.refresh(db_order)
     return db_order
 
 def get_orders(db: Session):
-    return db.query(models.Order).all()
+    return db.query(Order).all()
+
+def get_order(db: Session, order_id: str):
+    return db.query(Order).filter(Order.id == order_id).first()

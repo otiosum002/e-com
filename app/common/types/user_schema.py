@@ -1,12 +1,29 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 
 class UserBase(BaseModel):
-    name: str
-    email: str
+    username: str
+    email: EmailStr
+    full_name: Optional[str] = None
+    disabled: Optional[bool] = None
 
 class UserCreate(UserBase):
-    pass
+    password: str
+
+class UserInDB(UserBase):
+    hashed_password: str
+    is_verified: bool = False
+
+class UserResponse(UserBase):
+    class Config:
+        from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
 
 class User(UserBase):
     id: str
