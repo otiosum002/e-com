@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Response, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
@@ -6,7 +6,7 @@ from datetime import timedelta
 from app.db.database import get_db
 from app.models.user import User
 from app.common.types.user_schema import UserCreate, Token, UserResponse
-from app.repositories.repo_user import create_user, get_user, verify_user
+from app.repositories.repo_user import create_user, get_user, verify_user, authenticate_user
 from app.utils.auth import create_token, oauth2_scheme, verify_token, get_password_hash
 from app.utils.email import send_verification_email
 from app.common.constants.auth import ACCESS_TOKEN_EXPIRE_MINUTES, VERIFICATION_TOKEN_EXPIRE_MINUTES
@@ -76,6 +76,31 @@ async def login_for_access_token(
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/login")
+def login(form_data: OAuth2PasswordRequestForm = Depends(), response: Response = None, db: Session = Depends(get_db)):
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user or not user.is_verified:
+        raise HTTPException(status_code=401, detail="Invalid credentials or email not verified")
+    access_token = create_token(
+        data={"sub": user.username},
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        expires=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        samesite="lax",
+        secure=False,  # Set True in production with HTTPS
+    )
+    return {"message": "Login successful"}
+
+@router.post("/logout")
+def logout(response: Response):
+    response.delete_cookie("access_token")
+    return {"message": "Logged out"}
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
