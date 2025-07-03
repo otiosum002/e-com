@@ -12,3 +12,4 @@ class Product(Base):
     description = Column(String)
     price = Column(Float, nullable=False)
     in_stock = Column(Integer, default=0)
+    orders = relationship("Order", secondary="order_products", back_populates="products")

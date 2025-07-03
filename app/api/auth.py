@@ -45,7 +45,7 @@ async def register(
         verification_url=verification_url
     )
     
-    return {"msg": "User created. Please verify your email."}
+    return {"message": "User created. Please verify your email."}
 
 @router.get("/verify-email")
 async def verify_email(token: str, db: Session = Depends(get_db)):
@@ -55,7 +55,7 @@ async def verify_email(token: str, db: Session = Depends(get_db)):
     
     username = payload.get("sub")
     if verify_user(db, username):
-        return {"msg": "Email verified successfully"}
+        return {"message": "Email verified successfully"}
     raise HTTPException(status_code=400, detail="Invalid token")
 
 @router.post("/token", response_model=Token)
@@ -78,7 +78,7 @@ async def login_for_access_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/login")
-def login(form_data: OAuth2PasswordRequestForm = Depends(), response: Response = None, db: Session = Depends(get_db)):
+def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user or not user.is_verified:
         raise HTTPException(status_code=401, detail="Invalid credentials or email not verified")
@@ -133,4 +133,12 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
 
 @router.get("/users/me/", response_model=UserResponse)
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
-    return current_user 
+    return current_user
+
+class EmailConfig:
+    MAIL_USERNAME = "your_real_email@gmail.com"
+    MAIL_PASSWORD = "your_real_email_password_or_app_password"
+    MAIL_FROM = "your_real_email@gmail.com"
+    MAIL_PORT = 587
+    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_FROM_NAME = "E-commerce App" 
