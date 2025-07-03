@@ -15,6 +15,7 @@ class UserInDB(UserBase):
     is_verified: bool = False
 
 class UserResponse(UserBase):
+    id: str
     class Config:
         from_attributes = True
 
@@ -27,6 +28,5 @@ class TokenData(BaseModel):
 
 class User(UserBase):
     id: str
-
     class Config:
         orm_mode = True
