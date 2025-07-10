@@ -6,6 +6,7 @@ class UserBase(BaseModel):
     email: EmailStr
     full_name: Optional[str] = None
     disabled: Optional[bool] = None
+    role: Optional[str] = "customer"
 
 class UserCreate(UserBase):
     password: str

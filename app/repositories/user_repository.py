@@ -12,7 +12,7 @@ class UserRepository:
     def get_user_by_email(self, email: str) -> User:
         return self.db.query(User).filter(User.email == email).first()
 
-    def create_user(self, username: str, email: str, password: str, full_name: str = None) -> User:
+    def create_user(self, username: str, email: str, password: str, full_name: str = None, role: str = "customer") -> User:
         hashed_password = get_password_hash(password)
         db_user = User(
             username=username,
@@ -20,7 +20,8 @@ class UserRepository:
             full_name=full_name,
             hashed_password=hashed_password,
             disabled=False,
-            is_verified=False
+            is_verified=False,
+            role=role
         )
         self.db.add(db_user)
         self.db.commit()

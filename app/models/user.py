@@ -12,4 +12,5 @@ class User(Base):
     full_name = Column(String, nullable=True)
     hashed_password = Column(String)
     disabled = Column(Boolean, default=False)
-    is_verified = Column(Boolean, default=False) 
+    is_verified = Column(Boolean, default=False)
+    role = Column(String, default="customer") 

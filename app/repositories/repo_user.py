@@ -16,7 +16,8 @@ def create_user(db: Session, user: UserCreate):
         full_name=user.full_name,
         hashed_password=user.password,
         disabled=False,
-        is_verified=False
+        is_verified=False,
+        role=user.role
     )
     db.add(db_user)
     db.commit()
